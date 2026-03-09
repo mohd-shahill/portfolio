@@ -476,13 +476,35 @@ input, textarea { font-family: inherit; }
 .titlebar-btns { display: flex; gap: 8px; }
 .btn-close, .btn-minimize, .btn-maximize {
   width: 13px; height: 13px; border-radius: 50%;
-  transition: opacity var(--transition);
+  transition: opacity var(--transition), transform 0.1s;
   opacity: .85;
+  display: flex; align-items: center; justify-content: center;
 }
-.btn-close:hover, .btn-minimize:hover, .btn-maximize:hover { opacity: 1; }
+.btn-close:hover, .btn-minimize:hover, .btn-maximize:hover { opacity: 1; transform: scale(1.05); }
 .btn-close    { background: #ed6a5e; }
 .btn-minimize { background: #f5bf4f; }
 .btn-maximize { background: #62c554; }
+
+/* Window Button Hover Icons (macOS style) */
+.btn-close::before, .btn-minimize::before, .btn-maximize::before {
+  opacity: 0;
+  transition: opacity 0.15s;
+  font-family: var(--font);
+  font-weight: 700;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.titlebar-btns:hover .btn-close::before,
+.titlebar-btns:hover .btn-minimize::before,
+.titlebar-btns:hover .btn-maximize::before {
+  opacity: 1;
+}
+/* Close: '✕' */
+.btn-close::before { content: '✕'; font-size: 8px; color: rgba(77, 0, 0, 0.7); }
+/* Minimize: '−' */
+.btn-minimize::before { content: '−'; font-size: 11px; color: rgba(153, 87, 0, 0.7); margin-top: -1px; }
+/* Maximize: '+' or arrows. Using '+' for simplicity */
+.btn-maximize::before { content: '+'; font-size: 11px; color: rgba(0, 77, 0, 0.7); font-weight: 600; }
 .titlebar-title {
   flex: 1; text-align: center;
   font-size: .78rem; font-weight: 500;
@@ -628,7 +650,7 @@ input, textarea { font-family: inherit; }
   to   { opacity: 1; transform: translateX(0); }
 }
 .timeline-dot {
-  position: absolute; left: -28px; top: 6px;
+  position: absolute; left: -30px; top: 6px;
   width: 14px; height: 14px; border-radius: 50%;
   background: var(--surface);
   border: 3px solid var(--foam);
@@ -677,13 +699,13 @@ input, textarea { font-family: inherit; }
 /* ════════════════════════════════════════════════════════════
    PROJECTS APP
    ════════════════════════════════════════════════════════════ */
-.projects-container { max-width: 700px; margin: 0 auto; }
+.projects-container { max-width: 1100px; margin: 0 auto; }
 .projects-container h1 {
   font-size: 1.3rem; margin-bottom: 28px;
 }
 .projects-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
 }
 .project-card {
   perspective: 800px;

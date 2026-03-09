@@ -91,8 +91,8 @@ function toggleTheme() {
 // MUSIC WIDGET
 // ════════════════════════════════════════════════════════════
 
-// Automatically import all audio files from public/music using Vite
-const rawFiles = import.meta.glob('/public/music/*.{mp3,wav,ogg,m4a,flac}', { eager: true });
+// Automatically import all audio files from src/music using Vite
+const rawFiles = import.meta.glob('./music/*.{mp3,wav,ogg,m4a,flac}', { eager: true });
 const playlist = Object.keys(rawFiles).map(filePath => {
   const url = rawFiles[filePath].default || rawFiles[filePath];
   // Extract filename without path and extension
@@ -400,6 +400,11 @@ function openApp(name) {
       document.getElementById('terminal-input')?.focus();
     }, 100);
   }
+
+  // Initialize Snake game when opened
+  if (name === 'snake') {
+    setTimeout(initSnake, 100);
+  }
 }
 
 function closeApp(name) {
@@ -573,7 +578,8 @@ function initContextMenu() {
   });
 
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.context-menu')) {
+    // Hide the menu if clicking outside of it, OR if explicitly clicking an item inside it
+    if (!e.target.closest('.context-menu') || e.target.closest('.context-item')) {
       menu?.classList.add('hidden');
     }
   });
@@ -598,29 +604,49 @@ export function showToast(message, duration = 3500) {
 }
 
 // ════════════════════════════════════════════════════════════
-// WALLPAPER CHANGER
+// SKILL BARS ANIMATION
 // ════════════════════════════════════════════════════════════
-function changeBg() {
-  const desktop = document.getElementById('desktop');
-  if (!desktop) return;
-
-  // Remove current bg class
-  bgClasses.forEach(c => { if (c) desktop.classList.remove(c); });
-  bgIndex = (bgIndex + 1) % bgClasses.length;
-  if (bgClasses[bgIndex]) desktop.classList.add(bgClasses[bgIndex]);
-  showToast('🎨 Wallpaper changed!');
-
-  // Close context menu
-  document.getElementById('context-menu')?.classList.add('hidden');
+export function animateSkillBars() {
+  document.querySelectorAll('.skill-bar-fill').forEach(bar => {
+    const width = bar.dataset.width;
+    if (width) {
+      setTimeout(() => {
+        bar.style.width = width + '%';
+      }, 100);
+    }
+  });
 }
 
 // ════════════════════════════════════════════════════════════
 // CONTACT FORM
 // ════════════════════════════════════════════════════════════
-function handleContactSubmit(e) {
+async function handleContactSubmit(e) {
   e.preventDefault();
-  showToast('✅ Message sent! (Demo — connect via email for real contact)');
-  e.target.reset();
+  const form = e.target;
+  const submitBtnStr = form.querySelector('button[type="submit"] span');
+  const originalText = submitBtnStr.textContent;
+  
+  submitBtnStr.textContent = '✈️ Sending...';
+  
+  const formData = new FormData(form);
+  
+  try {
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (response.ok) {
+      showToast('✅ Message sent directly to Shahil!');
+      form.reset();
+    } else {
+      showToast('❌ Failed to send message. Please try again.');
+    }
+  } catch (error) {
+    showToast('❌ Network error. Please check your connection.');
+  } finally {
+    submitBtnStr.textContent = originalText;
+  }
 }
 
 // ════════════════════════════════════════════════════════════
@@ -710,7 +736,6 @@ window.openApp = openApp;
 window.closeApp = closeApp;
 window.minimizeApp = minimizeApp;
 window.maximizeApp = maximizeApp;
-window.changeBg = changeBg;
 window.handleContactSubmit = handleContactSubmit;
 window.toggleTheme = toggleTheme;
 

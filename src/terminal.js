@@ -201,21 +201,6 @@ function escapeHtml(text) {
 }
 
 // ════════════════════════════════════════════════════════════
-// SKILL BARS ANIMATION
-// ════════════════════════════════════════════════════════════
-function animateSkillBars() {
-  document.querySelectorAll('.skill-bar-fill').forEach(bar => {
-    const width = bar.dataset.width;
-    if (width) {
-      setTimeout(() => {
-        bar.style.width = width + '%';
-      }, 100);
-    }
-  });
-}
-
-
-// ════════════════════════════════════════════════════════════
 // MATRIX EFFECT
 // ════════════════════════════════════════════════════════════
 function startMatrixEffect() {
